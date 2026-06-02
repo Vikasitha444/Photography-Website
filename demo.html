@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Price Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --card: #1c1c1c;
+    --border: #2a2a2a;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --text: #f0ece4;
+    --muted: #888;
+    --danger: #e05555;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+  .logo span { color: var(--text); font-weight: 400; }
+  .nav-btns { display: flex; gap: 12px; }
+  .tab-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 20px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* PANELS */
+  .panel { display: none; padding: 40px; max-width: 900px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 36px; letter-spacing: 0.5px; }
+
+  /* SECTIONS */
+  .section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* SIZE GRID */
+  .size-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .size-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 12px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    text-align: center;
+    transition: all 0.2s;
+    line-height: 1.6;
+  }
+  .size-btn .size-label { font-weight: 500; color: var(--text); font-size: 0.85rem; }
+  .size-btn .size-price { color: var(--gold); font-size: 0.75rem; }
+  .size-btn:hover, .size-btn.selected {
+    border-color: var(--gold);
+    background: #1e1a0e;
+    color: var(--text);
+  }
+  .size-btn.selected { box-shadow: 0 0 0 1px var(--gold); }
+
+  /* QTY ROW */
+  .qty-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .qty-row label { font-size: 0.82rem; color: var(--muted); width: 80px; }
+  .qty-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .qty-ctrl button {
+    background: var(--surface);
+    border: none;
+    color: var(--text);
+    width: 34px;
+    height: 34px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.15s;
+  }
+  .qty-ctrl button:hover { background: var(--border); }
+  .qty-ctrl input {
+    background: var(--card);
+    border: none;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    color: var(--text);
+    width: 50px;
+    height: 34px;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+  }
+  .qty-subtotal { font-size: 0.85rem; color: var(--gold-light); margin-left: auto; }
+
+  /* DRONE */
+  .drone-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .toggle-switch {
+    position: relative;
+    width: 48px;
+    height: 26px;
+  }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    background: var(--border);
+    border-radius: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    left: 3px; top: 3px;
+    width: 20px; height: 20px;
+    background: var(--muted);
+    border-radius: 50%;
+    transition: all 0.2s;
+  }
+  input:checked + .toggle-track { background: #3a2e0a; border: 1px solid var(--gold); }
+  input:checked + .toggle-track::after { left: 23px; background: var(--gold); }
+  .drone-label { font-size: 0.9rem; }
+  .drone-price { margin-left: auto; color: var(--gold); font-size: 0.9rem; }
+
+  /* LOCATION */
+  .location-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .location-row label { font-size: 0.82rem; color: var(--muted); }
+  .location-row input[type=number] {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 3px;
+    width: 90px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .location-row input:focus { border-color: var(--gold); }
+  .location-note { font-size: 0.75rem; color: var(--muted); margin-top: 6px; }
+
+  /* TOTAL */
+  .total-box {
+    background: linear-gradient(135deg, #1a1508, #0d0d0d);
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    padding: 28px;
+    margin-top: 24px;
+  }
+  .total-label { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+  .total-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    color: var(--gold-light);
+    margin: 6px 0 16px;
+  }
+  .total-breakdown { font-size: 0.8rem; color: var(--muted); line-height: 2; }
+  .total-breakdown span { color: var(--text); float: right; }
+
+  /* ADMIN */
+  .admin-header {
+    background: #1a0a0a;
+    border: 1px solid #3a1515;
+    border-radius: 4px;
+    padding: 14px 20px;
+    margin-bottom: 24px;
+    font-size: 0.8rem;
+    color: #cc6666;
+    letter-spacing: 0.5px;
+  }
+  .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 600px) { .admin-grid { grid-template-columns: 1fr; } }
+  .admin-section { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 22px; }
+  .admin-section h3 { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 0.95rem; margin-bottom: 16px; font-weight: 400; }
+  .price-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .price-row label { font-size: 0.78rem; color: var(--muted); width: 70px; flex-shrink: 0; }
+  .price-row input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 10px;
+    border-radius: 3px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .price-row input:focus { border-color: var(--gold); }
+  .save-btn {
+    background: var(--gold);
+    color: #000;
+    border: none;
+    padding: 11px 28px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-top: 16px;
+    transition: background 0.2s;
+  }
+  .save-btn:hover { background: var(--gold-light); }
+  .save-confirm { font-size: 0.78rem; color: #5c9; margin-top: 8px; display: none; }
+
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+  .single-price-row { display: flex; align-items: center; gap: 10px; }
+  .single-price-row label { font-size: 0.82rem; color: var(--muted); }
+  .single-price-row input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 3px;
+    width: 120px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .single-price-row input:focus { border-color: var(--gold); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">31 Crew<span>Photograohy</span></div>
+  <div class="nav-btns">
+    <button class="tab-btn active" onclick="showPanel('calculator', this)">Calculator</button>
+    <button class="tab-btn" onclick="showPanel('admin', this)">Admin</button>
+  </div>
+</nav>
+
+<!-- CALCULATOR -->
+<div id="calculator" class="panel active">
+  <h1>Price Calculator</h1>
+  <p class="subtitle">Select your package details to get an instant quote</p>
+
+  <!-- Photo Frames -->
+  <div class="section">
+    <div class="section-title">Photo Frames</div>
+    <div class="size-grid" id="frameGrid"></div>
+    <div class="qty-row">
+      <label>Quantity</label>
+      <div class="qty-ctrl">
+        <button onclick="changeQty('frameQty', -1)">−</button>
+        <input type="number" id="frameQty" value="0" min="0" onchange="updateTotal()">
+        <button onclick="changeQty('frameQty', 1)">+</button>
+      </div>
+      <div class="qty-subtotal" id="frameSubtotal">Rs. 0</div>
+    </div>
+  </div>
+
+  <!-- Thank You Cards -->
+  <div class="section">
+    <div class="section-title">Thank You Cards</div>
+    <div class="size-grid" id="cardGrid"></div>
+    <div class="qty-row">
+      <label>Quantity</label>
+      <div class="qty-ctrl">
+        <button onclick="changeQty('cardQty', -1)">−</button>
+        <input type="number" id="cardQty" value="0" min="0" onchange="updateTotal()">
+        <button onclick="changeQty('cardQty', 1)">+</button>
+      </div>
+      <div class="qty-subtotal" id="cardSubtotal">Rs. 0</div>
+    </div>
+  </div>
+
+  <!-- Drones -->
+  <div class="section">
+    <div class="section-title">Drone Coverage</div>
+    <div class="drone-row">
+      <label class="toggle-switch">
+        <input type="checkbox" id="droneToggle" onchange="updateTotal()">
+        <span class="toggle-track"></span>
+      </label>
+      <span class="drone-label">Add Drone Videography</span>
+      <span class="drone-price" id="dronePriceLabel">Rs. 25,000</span>
+    </div>
+  </div>
+
+  <!-- Photo Album -->
+  <div class="section">
+    <div class="section-title">Photo Album</div>
+    <div class="size-grid" id="albumGrid"></div>
+    <div class="qty-row">
+      <label>Quantity</label>
+      <div class="qty-ctrl">
+        <button onclick="changeQty('albumQty', -1)">−</button>
+        <input type="number" id="albumQty" value="0" min="0" onchange="updateTotal()">
+        <button onclick="changeQty('albumQty', 1)">+</button>
+      </div>
+      <div class="qty-subtotal" id="albumSubtotal">Rs. 0</div>
+    </div>
+  </div>
+
+  <!-- Location -->
+  <div class="section">
+    <div class="section-title">Travel / Location</div>
+    <div class="location-row">
+      <label>Distance (km)</label>
+      <input type="number" id="locationKm" value="0" min="0" oninput="updateTotal()">
+      <span id="locationSubtotal" style="margin-left:auto;color:var(--gold);font-size:0.85rem;">Rs. 0</span>
+    </div>
+    <p class="location-note" id="locationNote">Rate: Rs. 120 per km</p>
+  </div>
+
+  <!-- Total -->
+  <div class="total-box">
+    <div class="total-label">Estimated Total</div>
+    <div class="total-amount" id="totalAmount">Rs. 0</div>
+    <div class="total-breakdown" id="breakdown"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin" class="panel">
+  <h1>Admin Panel</h1>
+  <p class="subtitle">Update pricing — changes apply immediately to the calculator</p>
+  <div class="admin-header">⚠ Changes are saved locally in this browser session.</div>
+
+  <div class="admin-grid">
+
+    <div class="admin-section">
+      <h3>Photo Frame Prices</h3>
+      <div id="adminFramePrices"></div>
+    </div>
+
+    <div class="admin-section">
+      <h3>Thank You Card Prices</h3>
+      <div id="adminCardPrices"></div>
+    </div>
+
+    <div class="admin-section">
+      <h3>Photo Album Prices</h3>
+      <div id="adminAlbumPrices"></div>
+    </div>
+
+    <div class="admin-section">
+      <h3>Other Services</h3>
+      <div class="single-price-row" style="margin-bottom:14px">
+        <label>Drone</label>
+        <input type="number" id="adminDronePrice" value="25000" onchange="saveMisc()">
+      </div>
+      <div class="single-price-row">
+        <label>Per KM</label>
+        <input type="number" id="adminLocationRate" value="120" onchange="saveMisc()">
+      </div>
+    </div>
+
+  </div>
+
+  <button class="save-btn" onclick="saveAllPrices()">Save All Prices</button>
+  <div class="save-confirm" id="saveConfirm">✓ Prices updated successfully</div>
+</div>
+
+<script>
+// ---- DEFAULT PRICES ----
+let prices = {
+  frames: [
+    { size: '4×4', price: 1000 },
+    { size: '6×8', price: 1500 },
+    { size: '8×12', price: 2500 },
+    { size: '10×15', price: 3500 },
+    { size: '12×15', price: 4100 },
+    { size: '12×18', price: 4500 },
+    { size: '16×24', price: 8500 },
+  ],
+  cards: [
+    { size: '4×6', price: 100 },
+    { size: '7×5', price: 120 },
+    { size: '6×8', price: 150 },
+  ],
+  albums: [
+    { size: '8×24', price: 15000 },
+    { size: '10×24', price: 21000 },
+    { size: '12×24', price: 28000 },
+    { size: '12×32', price: 35000 },
+    { size: '16×18', price: 47000 },
+    { size: '16×24', price: 55000 },
+  ],
+  drone: 25000,
+  locationRate: 120,
+};
+
+let selected = { frame: null, card: null, album: null };
+
+function fmt(n) {
+  return 'Rs. ' + n.toLocaleString('en-IN');
+}
+
+function buildGrid(containerId, category, items) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  items.forEach((item, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'size-btn' + (selected[category] === i ? ' selected' : '');
+    btn.innerHTML = `<div class="size-label">${item.size}"</div><div class="size-price">${fmt(item.price)}</div>`;
+    btn.onclick = () => selectSize(category, i);
+    el.appendChild(btn);
+  });
+}
+
+function selectSize(category, idx) {
+  selected[category] = (selected[category] === idx) ? null : idx;
+  const map = { frame: ['frameGrid', prices.frames], card: ['cardGrid', prices.cards], album: ['albumGrid', prices.albums] };
+  buildGrid(map[category][0], category, map[category][1]);
+  updateTotal();
+}
+
+function changeQty(id, delta) {
+  const el = document.getElementById(id);
+  el.value = Math.max(0, parseInt(el.value || 0) + delta);
+  updateTotal();
+}
+
+function updateTotal() {
+  let total = 0;
+  const lines = [];
+
+  // Frames
+  const fQty = parseInt(document.getElementById('frameQty').value) || 0;
+  if (selected.frame !== null && fQty > 0) {
+    const p = prices.frames[selected.frame];
+    const sub = p.price * fQty;
+    total += sub;
+    lines.push([`Photo Frame (${p.size}") × ${fQty}`, sub]);
+    document.getElementById('frameSubtotal').textContent = fmt(sub);
+  } else {
+    document.getElementById('frameSubtotal').textContent = 'Rs. 0';
+  }
+
+  // Cards
+  const cQty = parseInt(document.getElementById('cardQty').value) || 0;
+  if (selected.card !== null && cQty > 0) {
+    const p = prices.cards[selected.card];
+    const sub = p.price * cQty;
+    total += sub;
+    lines.push([`Thank You Card (${p.size}") × ${cQty}`, sub]);
+    document.getElementById('cardSubtotal').textContent = fmt(sub);
+  } else {
+    document.getElementById('cardSubtotal').textContent = 'Rs. 0';
+  }
+
+  // Drone
+  if (document.getElementById('droneToggle').checked) {
+    total += prices.drone;
+    lines.push(['Drone Videography', prices.drone]);
+  }
+
+  // Album
+  const aQty = parseInt(document.getElementById('albumQty').value) || 0;
+  if (selected.album !== null && aQty > 0) {
+    const p = prices.albums[selected.album];
+    const sub = p.price * aQty;
+    total += sub;
+    lines.push([`Photo Album (${p.size}") × ${aQty}`, sub]);
+    document.getElementById('albumSubtotal').textContent = fmt(sub);
+  } else {
+    document.getElementById('albumSubtotal').textContent = 'Rs. 0';
+  }
+
+  // Location
+  const km = parseFloat(document.getElementById('locationKm').value) || 0;
+  if (km > 0) {
+    const sub = km * prices.locationRate;
+    total += sub;
+    lines.push([`Travel (${km} km × Rs.${prices.locationRate})`, sub]);
+    document.getElementById('locationSubtotal').textContent = fmt(sub);
+  } else {
+    document.getElementById('locationSubtotal').textContent = 'Rs. 0';
+  }
+
+  document.getElementById('totalAmount').textContent = fmt(total);
+
+  const bd = document.getElementById('breakdown');
+  if (lines.length === 0) {
+    bd.innerHTML = '<em style="color:var(--muted)">Select items above to see breakdown</em>';
+  } else {
+    bd.innerHTML = lines.map(([label, val]) =>
+      `${label}<span>${fmt(val)}</span>`
+    ).join('<br>');
+  }
+}
+
+// ---- ADMIN ----
+function buildAdminPrices() {
+  // Frames
+  const af = document.getElementById('adminFramePrices');
+  af.innerHTML = prices.frames.map((f, i) =>
+    `<div class="price-row"><label>${f.size}"</label><input type="number" id="af_${i}" value="${f.price}" onchange="updateFramePrice(${i})"></div>`
+  ).join('');
+
+  // Cards
+  const ac = document.getElementById('adminCardPrices');
+  ac.innerHTML = prices.cards.map((c, i) =>
+    `<div class="price-row"><label>${c.size}"</label><input type="number" id="ac_${i}" value="${c.price}" onchange="updateCardPrice(${i})"></div>`
+  ).join('');
+
+  // Albums
+  const aa = document.getElementById('adminAlbumPrices');
+  aa.innerHTML = prices.albums.map((a, i) =>
+    `<div class="price-row"><label>${a.size}"</label><input type="number" id="aa_${i}" value="${a.price}" onchange="updateAlbumPrice(${i})"></div>`
+  ).join('');
+
+  document.getElementById('adminDronePrice').value = prices.drone;
+  document.getElementById('adminLocationRate').value = prices.locationRate;
+}
+
+function saveAllPrices() {
+  prices.frames.forEach((f, i) => {
+    const val = parseInt(document.getElementById('af_' + i).value);
+    if (!isNaN(val)) f.price = val;
+  });
+  prices.cards.forEach((c, i) => {
+    const val = parseInt(document.getElementById('ac_' + i).value);
+    if (!isNaN(val)) c.price = val;
+  });
+  prices.albums.forEach((a, i) => {
+    const val = parseInt(document.getElementById('aa_' + i).value);
+    if (!isNaN(val)) a.price = val;
+  });
+  saveMisc();
+
+  // Rebuild grids
+  buildGrid('frameGrid', 'frame', prices.frames);
+  buildGrid('cardGrid', 'card', prices.cards);
+  buildGrid('albumGrid', 'album', prices.albums);
+  document.getElementById('dronePriceLabel').textContent = fmt(prices.drone);
+  document.getElementById('locationNote').textContent = `Rate: Rs. ${prices.locationRate} per km`;
+  updateTotal();
+
+  const c = document.getElementById('saveConfirm');
+  c.style.display = 'block';
+  setTimeout(() => c.style.display = 'none', 2500);
+}
+
+function saveMisc() {
+  const d = parseInt(document.getElementById('adminDronePrice').value);
+  const l = parseInt(document.getElementById('adminLocationRate').value);
+  if (!isNaN(d)) prices.drone = d;
+  if (!isNaN(l)) prices.locationRate = l;
+  document.getElementById('dronePriceLabel').textContent = fmt(prices.drone);
+  document.getElementById('locationNote').textContent = `Rate: Rs. ${prices.locationRate} per km`;
+  updateTotal();
+}
+
+function showPanel(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'admin') buildAdminPrices();
+}
+
+// INIT
+buildGrid('frameGrid', 'frame', prices.frames);
+buildGrid('cardGrid', 'card', prices.cards);
+buildGrid('albumGrid', 'album', prices.albums);
+updateTotal();
+</script>
+</body>
+</html>
