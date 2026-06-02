@@ -3,19 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Price Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>31crew</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d0d0d;
-    --surface: #161616;
-    --card: #1c1c1c;
-    --border: #2a2a2a;
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --text: #f0ece4;
-    --muted: #888;
-    --danger: #e05555;
+    --bg: #faf7f0;
+    --surface: #f4efe2;
+    --card: #fffdf7;
+    --border: #e0d8c0;
+    --rose: #c8a84a;
+    --rose-light: #d4b86a;
+    --rose-pale: #f8f0d8;
+    --text: #2e2008;
+    --muted: #9a8a60;
+    --accent: #9a7a28;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,7 +24,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Jost', sans-serif;
     font-weight: 300;
     min-height: 100vh;
   }
@@ -33,37 +34,40 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
+    padding: 18px 40px;
     border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
-    background: var(--bg);
+    background: rgba(250,248,245,0.95);
+    backdrop-filter: blur(8px);
     z-index: 100;
   }
   .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    letter-spacing: 2px;
-    color: var(--gold);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-style: italic;
+    letter-spacing: 1px;
+    color: var(--accent);
   }
-  .logo span { color: var(--text); font-weight: 400; }
-  .nav-btns { display: flex; gap: 12px; }
+  .logo span { color: var(--text); font-style: normal; font-weight: 300; }
+  .nav-btns { display: flex; gap: 10px; }
   .tab-btn {
     background: none;
     border: 1px solid var(--border);
     color: var(--muted);
-    padding: 8px 20px;
-    border-radius: 2px;
+    padding: 7px 20px;
+    border-radius: 20px;
     cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
     transition: all 0.2s;
   }
   .tab-btn.active, .tab-btn:hover {
-    border-color: var(--gold);
-    color: var(--gold);
+    border-color: var(--rose);
+    color: var(--rose);
+    background: var(--rose-pale);
   }
 
   /* PANELS */
@@ -71,30 +75,34 @@
   .panel.active { display: block; }
 
   h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 400;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    font-style: italic;
     color: var(--text);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
-  .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 36px; letter-spacing: 0.5px; }
+  .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 36px; letter-spacing: 0.5px; }
 
   /* SECTIONS */
   .section {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 28px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
   }
   .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    color: var(--gold);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--rose);
     margin-bottom: 20px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    letter-spacing: 0.5px;
   }
   .section-title::after {
     content: '';
@@ -107,7 +115,7 @@
   .size-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 18px;
   }
   .size-btn {
@@ -115,22 +123,22 @@
     border: 1px solid var(--border);
     color: var(--muted);
     padding: 12px 8px;
-    border-radius: 3px;
+    border-radius: 6px;
     cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.78rem;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.76rem;
     text-align: center;
     transition: all 0.2s;
     line-height: 1.6;
   }
   .size-btn .size-label { font-weight: 500; color: var(--text); font-size: 0.85rem; }
-  .size-btn .size-price { color: var(--gold); font-size: 0.75rem; }
+  .size-btn .size-price { color: var(--rose); font-size: 0.73rem; }
   .size-btn:hover, .size-btn.selected {
-    border-color: var(--gold);
-    background: #1e1a0e;
+    border-color: var(--rose);
+    background: var(--rose-pale);
     color: var(--text);
   }
-  .size-btn.selected { box-shadow: 0 0 0 1px var(--gold); }
+  .size-btn.selected { box-shadow: 0 0 0 1px var(--rose); }
 
   /* QTY ROW */
   .qty-row {
@@ -139,13 +147,12 @@
     gap: 14px;
     margin-top: 8px;
   }
-  .qty-row label { font-size: 0.82rem; color: var(--muted); width: 80px; }
+  .qty-row label { font-size: 0.8rem; color: var(--muted); width: 80px; }
   .qty-ctrl {
     display: flex;
     align-items: center;
-    gap: 0;
     border: 1px solid var(--border);
-    border-radius: 3px;
+    border-radius: 6px;
     overflow: hidden;
   }
   .qty-ctrl button {
@@ -158,9 +165,9 @@
     font-size: 1.1rem;
     transition: background 0.15s;
   }
-  .qty-ctrl button:hover { background: var(--border); }
+  .qty-ctrl button:hover { background: var(--rose-pale); color: var(--rose); }
   .qty-ctrl input {
-    background: var(--card);
+    background: #fff;
     border: none;
     border-left: 1px solid var(--border);
     border-right: 1px solid var(--border);
@@ -168,11 +175,11 @@
     width: 50px;
     height: 34px;
     text-align: center;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Jost', sans-serif;
     font-size: 0.9rem;
     outline: none;
   }
-  .qty-subtotal { font-size: 0.85rem; color: var(--gold-light); margin-left: auto; }
+  .qty-subtotal { font-size: 0.85rem; color: var(--rose); margin-left: auto; }
 
   /* DRONE */
   .drone-row {
@@ -199,14 +206,15 @@
     position: absolute;
     left: 3px; top: 3px;
     width: 20px; height: 20px;
-    background: var(--muted);
+    background: #fff;
     border-radius: 50%;
     transition: all 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
   }
-  input:checked + .toggle-track { background: #3a2e0a; border: 1px solid var(--gold); }
-  input:checked + .toggle-track::after { left: 23px; background: var(--gold); }
-  .drone-label { font-size: 0.9rem; }
-  .drone-price { margin-left: auto; color: var(--gold); font-size: 0.9rem; }
+  input:checked + .toggle-track { background: var(--rose); }
+  input:checked + .toggle-track::after { left: 23px; }
+  .drone-label { font-size: 0.88rem; }
+  .drone-price { margin-left: auto; color: var(--rose); font-size: 0.88rem; }
 
   /* LOCATION */
   .location-row {
@@ -214,87 +222,89 @@
     align-items: center;
     gap: 14px;
   }
-  .location-row label { font-size: 0.82rem; color: var(--muted); }
+  .location-row label { font-size: 0.8rem; color: var(--muted); }
   .location-row input[type=number] {
     background: var(--surface);
     border: 1px solid var(--border);
     color: var(--text);
     padding: 8px 12px;
-    border-radius: 3px;
+    border-radius: 6px;
     width: 90px;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Jost', sans-serif;
     font-size: 0.9rem;
     outline: none;
     transition: border-color 0.2s;
   }
-  .location-row input:focus { border-color: var(--gold); }
-  .location-note { font-size: 0.75rem; color: var(--muted); margin-top: 6px; }
+  .location-row input:focus { border-color: var(--rose); }
+  .location-note { font-size: 0.73rem; color: var(--muted); margin-top: 6px; }
 
   /* TOTAL */
   .total-box {
-    background: linear-gradient(135deg, #1a1508, #0d0d0d);
-    border: 1px solid var(--gold);
-    border-radius: 4px;
+    background: linear-gradient(135deg, #fff5f2, #faf8f5);
+    border: 1px solid var(--rose-light);
+    border-radius: 8px;
     padding: 28px;
-    margin-top: 24px;
+    margin-top: 20px;
+    box-shadow: 0 2px 12px rgba(176,125,110,0.1);
   }
-  .total-label { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+  .total-label { font-size: 0.72rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); }
   .total-amount {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.8rem;
-    color: var(--gold-light);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    color: var(--accent);
     margin: 6px 0 16px;
   }
-  .total-breakdown { font-size: 0.8rem; color: var(--muted); line-height: 2; }
+  .total-breakdown { font-size: 0.8rem; color: var(--muted); line-height: 2; border-top: 1px solid var(--border); padding-top: 12px; }
   .total-breakdown span { color: var(--text); float: right; }
 
   /* ADMIN */
   .admin-header {
-    background: #1a0a0a;
-    border: 1px solid #3a1515;
-    border-radius: 4px;
-    padding: 14px 20px;
+    background: #fff8f0;
+    border: 1px solid #e8d5c0;
+    border-radius: 6px;
+    padding: 12px 18px;
     margin-bottom: 24px;
-    font-size: 0.8rem;
-    color: #cc6666;
+    font-size: 0.78rem;
+    color: #b07040;
     letter-spacing: 0.5px;
   }
-  .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   @media (max-width: 600px) { .admin-grid { grid-template-columns: 1fr; } }
-  .admin-section { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 22px; }
-  .admin-section h3 { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 0.95rem; margin-bottom: 16px; font-weight: 400; }
+  .admin-section { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 22px; box-shadow: 0 1px 4px rgba(0,0,0,0.03); }
+  .admin-section h3 { font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--rose); font-size: 1rem; margin-bottom: 16px; font-weight: 400; }
   .price-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .price-row label { font-size: 0.78rem; color: var(--muted); width: 70px; flex-shrink: 0; }
+  .price-row label { font-size: 0.76rem; color: var(--muted); width: 70px; flex-shrink: 0; }
   .price-row input {
     flex: 1;
     background: var(--surface);
     border: 1px solid var(--border);
     color: var(--text);
     padding: 7px 10px;
-    border-radius: 3px;
-    font-family: 'DM Sans', sans-serif;
+    border-radius: 5px;
+    font-family: 'Jost', sans-serif;
     font-size: 0.82rem;
     outline: none;
     transition: border-color 0.2s;
   }
-  .price-row input:focus { border-color: var(--gold); }
+  .price-row input:focus { border-color: var(--rose); }
   .save-btn {
-    background: var(--gold);
-    color: #000;
+    background: var(--rose);
+    color: #fff;
     border: none;
     padding: 11px 28px;
-    border-radius: 3px;
+    border-radius: 20px;
     cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.82rem;
-    letter-spacing: 1px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
     font-weight: 500;
     margin-top: 16px;
     transition: background 0.2s;
   }
-  .save-btn:hover { background: var(--gold-light); }
-  .save-confirm { font-size: 0.78rem; color: #5c9; margin-top: 8px; display: none; }
+  .save-btn:hover { background: var(--accent); }
+  .save-confirm { font-size: 0.78rem; color: #6aaa6a; margin-top: 8px; display: none; }
 
   hr.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 
@@ -305,20 +315,20 @@
     border: 1px solid var(--border);
     color: var(--text);
     padding: 8px 12px;
-    border-radius: 3px;
+    border-radius: 5px;
     width: 120px;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Jost', sans-serif;
     font-size: 0.85rem;
     outline: none;
     transition: border-color 0.2s;
   }
-  .single-price-row input:focus { border-color: var(--gold); }
+  .single-price-row input:focus { border-color: var(--rose); }
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="logo">31 Crew<span>Photograohy</span></div>
+  <div class="logo">31<span>Crew</span></div>
   <div class="nav-btns">
     <button class="tab-btn active" onclick="showPanel('calculator', this)">Calculator</button>
     <button class="tab-btn" onclick="showPanel('admin', this)">Admin</button>
